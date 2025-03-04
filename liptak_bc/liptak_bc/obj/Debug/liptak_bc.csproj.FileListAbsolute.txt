@@ -12,3 +12,10 @@ C:\Users\majk\Desktop\liptak_bc\liptak_bc\obj\Debug\liptak_bc.csproj.AssemblyRef
 C:\Users\majk\Desktop\liptak_bc\liptak_bc\obj\Debug\liptak_bc.csproj.CoreCompileInputs.cache
 C:\Users\majk\Desktop\liptak_bc\liptak_bc\obj\Debug\liptak_bc.exe
 C:\Users\majk\Desktop\liptak_bc\liptak_bc\obj\Debug\liptak_bc.pdb
+C:\Users\majk\Desktop\c-bc-3\liptak_bc\liptak_bc\bin\Debug\liptak_bc.exe.config
+C:\Users\majk\Desktop\c-bc-3\liptak_bc\liptak_bc\bin\Debug\liptak_bc.exe
+C:\Users\majk\Desktop\c-bc-3\liptak_bc\liptak_bc\bin\Debug\liptak_bc.pdb
+C:\Users\majk\Desktop\c-bc-3\liptak_bc\liptak_bc\obj\Debug\liptak_bc.csproj.AssemblyReference.cache
+C:\Users\majk\Desktop\c-bc-3\liptak_bc\liptak_bc\obj\Debug\liptak_bc.csproj.CoreCompileInputs.cache
+C:\Users\majk\Desktop\c-bc-3\liptak_bc\liptak_bc\obj\Debug\liptak_bc.exe
+C:\Users\majk\Desktop\c-bc-3\liptak_bc\liptak_bc\obj\Debug\liptak_bc.pdb

@@ -376,7 +376,7 @@ namespace liptak_bc
             Console.WriteLine("4. Podľa podkategórie (vzostupne/zostupne)");
             Console.WriteLine("5. Podľa ceny (vzostupne/zostupne)");
             Console.WriteLine("6. Podľa množstva na sklade (vzostupne/zostupne)");
-            Console.WriteLine("Zadajte viacero čísel oddelených čiarkou (napr. 1z,3v,5z):");
+            Console.WriteLine("Zadajte cislo a hodnotu (napr. 1z,3v,5z):");
 
             string choice = Console.ReadLine();
             var criteria = choice.Split(',').Select(c => c.Trim()).ToList();
@@ -445,7 +445,7 @@ namespace liptak_bc
                 Console.WriteLine($"Podľa {criterionKey} ({order})");
             }
 
-            DisplaySearchResults(productsToSort);
+            DisplaySortedProducts(productsToSort);
 
             Console.WriteLine("\nChcete uložiť zoradené výsledky? (ano/nie):");
             string saveResponse = Console.ReadLine().Trim().ToLower();
@@ -453,6 +453,43 @@ namespace liptak_bc
             {
                 SaveSortedResults(productsToSort);
             }
+        }
+
+        private void DisplaySortedProducts(List<Product> sortedProducts)
+        {
+            Console.Clear();
+            Console.WriteLine("\n==============================================================");
+            Console.WriteLine("                    ZOZNAM ZORADENÝCH PRODUKTOV                ");
+            Console.WriteLine("==============================================================");
+
+            Console.WriteLine("{0,-5} | {1,-35} | {2,-15} | {3,-20} | {4,-8} | {5,-6}",
+                "ID", "Názov", "Kategória", "Podkategória", "Cena (EUR)", "Sklad");
+            Console.WriteLine(new string('=', 90));
+
+            foreach (var product in sortedProducts)
+            {
+                Console.WriteLine("{0,-5} | {1,-35} | {2,-15} | {3,-20} | {4,-8:F2} | {5,-6} ks",
+                    product.GetId(),
+                    product.GetName().Length > 35 ? product.GetName().Substring(0, 32) + "..." : product.GetName(),
+                    product.GetCategory(),
+                    product.GetSubCategory(),
+                    product.GetPrice(),
+                    product.GetStock());
+
+                if (product.GetAdditionalInfo().Count > 0)
+                {
+                    Console.WriteLine("\n   Dodatočné informácie:");
+                    foreach (var info in product.GetAdditionalInfo())
+                    {
+                        Console.WriteLine("     - {0,-15}: {1}", info.Key, info.Value);
+                    }
+                }
+
+                Console.WriteLine(new string('-', 90));
+            }
+
+            Console.WriteLine("\nStlačte ENTER pre návrat do hlavného menu...");
+            Console.ReadLine();
         }
         private void DisplayCategories()
         {
@@ -940,5 +977,5 @@ namespace liptak_bc
         }
     }
 
-   
+
 }
