@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<products>
+  <product>
+    <id>19</id>
+    <name>mmmmmmm</name>
+    <category>jekfj</category>
+    <subcategory>aksdjf</subcategory>
+    <price>93</price>
+    <stock>2</stock>
+    <additional_information>
+      <je_alfa>nie</je_alfa>
+      <je_cerveny>ano</je_cerveny>
+    </additional_information>
+  </product>
+  <product>
+    <id>8</id>
+    <name>Kabel pevny - CYKY</name>
+    <category>Kable a vodice</category>
+    <subcategory>Istice</subcategory>
+    <price>3.22</price>
+    <stock>128</stock>
+    <additional_information>
+      <skratova_odolnost>6kA</skratova_odolnost>
+      <menovity_prud>10A</menovity_prud>
+      <stupen_krytia_IP>IP20</stupen_krytia_IP>
+      <pocet_polov>1</pocet_polov>
+    </additional_information>
+  </product>
+  <product>
+    <id>7</id>
+    <name>Istic - 286519</name>
+    <category>Modularne pristroje</category>
+    <subcategory>Istice</subcategory>
+    <price>3.22</price>
+    <stock>128</stock>
+    <additional_information>
+      <skratova_odolnost>6kA</skratova_odolnost>
+      <menovity_prud>10A</menovity_prud>
+      <stupen_krytia_IP>IP20</stupen_krytia_IP>
+      <pocet_polov>1</pocet_polov>
+    </additional_information>
+  </product>
+  <product>
+    <id>9</id>
+    <name>Zasuvkova rozvodnica E-BOX 21903</name>
+    <category>Rozvodnice a rozvadzace</category>
+    <subcategory>Zasuvkove rozvodnice</subcategory>
+    <price>3.22</price>
+    <stock>128</stock>
+    <additional_information>
+      <skratova_odolnost>6kA</skratova_odolnost>
+      <menovity_prud>10A</menovity_prud>
+      <stupen_krytia_IP>IP20</stupen_krytia_IP>
+      <pocet_polov>1</pocet_polov>
+    </additional_information>
+  </product>
+  <product>
+    <id>5</id>
+    <name>LED Núdzové svietidlo NESSI 3W</name>
+    <category>Svietidla</category>
+    <subcategory>Svietidla Priemyselne</subcategory>
+    <price>23.8</price>
+    <stock>30</stock>
+    <additional_information>
+      <energyClass>C</energyClass>
+      <colorTemperature>Studena Biela</colorTemperature>
+      <lumen>150</lumen>
+      <ledTechnology>Ano</ledTechnology>
+      <voltage>220</voltage>
+    </additional_information>
+  </product>
+  <product>
+    <id>3</id>
+    <name>LED záhradné svietidlo 3W</name>
+    <category>Svietidla</category>
+    <subcategory>Svietidla Exterierove</subcategory>
+    <price>24.5</price>
+    <stock>63</stock>
+    <additional_information>
+      <energyClass>G</energyClass>
+      <colorTemperature>Biela</colorTemperature>
+      <lumen>170</lumen>
+      <ledTechnology>Ano</ledTechnology>
+      <voltage>264</voltage>
+    </additional_information>
+  </product>
+  <product>
+    <id>2</id>
+    <name>Zápustné svietidlo Randy</name>
+    <category>Svietidla</category>
+    <subcategory>Svietidla Interierove</subcategory>
+    <price>25.99</price>
+    <stock>39</stock>
+    <additional_information>
+      <energyClass>F</energyClass>
+      <colorTemperature>Biela</colorTemperature>
+      <lumen>240</lumen>
+      <ledTechnology>Ano</ledTechnology>
+      <voltage>230</voltage>
+    </additional_information>
+  </product>
+  <product>
+    <id>1</id>
+    <name>Moderné zápustné svietidlo Lite</name>
+    <category>Svietidla</category>
+    <subcategory>Svietidla Interierove</subcategory>
+    <price>27.5</price>
+    <stock>22</stock>
+    <additional_information>
+      <energyClass>F</energyClass>
+      <colorTemperature>Tepla Biela</colorTemperature>
+      <lumen>240</lumen>
+      <ledTechnology>Ano</ledTechnology>
+      <voltage>230</voltage>
+    </additional_information>
+  </product>
+  <product>
+    <id>4</id>
+    <name>Nájazdové svietidlo ATTILA Square</name>
+    <category>Svietidla</category>
+    <subcategory>Svietidla Exterierove</subcategory>
+    <price>27.69</price>
+    <stock>7</stock>
+    <additional_information>
+      <energyClass>F</energyClass>
+      <colorTemperature>Tepla Biela</colorTemperature>
+      <lumen>130</lumen>
+      <ledTechnology>Ano</ledTechnology>
+      <voltage>230</voltage>
+    </additional_information>
+  </product>
+  <product>
+    <id>6</id>
+    <name>LED Núdzové svietidlo CESSI 3W</name>
+    <category>Svietidla</category>
+    <subcategory>Svietidla Priemyselne</subcategory>
+    <price>43.84</price>
+    <stock>2</stock>
+    <additional_information>
+      <energyClass>A</energyClass>
+      <colorTemperature>Studena Biela</colorTemperature>
+      <lumen>130</lumen>
+      <ledTechnology>Ano</ledTechnology>
+      <voltage>30</voltage>
+    </additional_information>
+  </product>
+  <product>
+    <id>10</id>
+    <name>Tango 3901A - ramcek jednonasobny</name>
+    <category>Vypinace a zasuvky</category>
+    <subcategory>Tango - ABB</subcategory>
+    <price>3.22</price>
+    <stock>128</stock>
+    <additional_information>
+      <skratova_odolnost>6kA</skratova_odolnost>
+      <menovity_prud>10A</menovity_prud>
+      <stupen_krytia_IP>IP20</stupen_krytia_IP>
+      <pocet_polov>1</pocet_polov>
+    </additional_information>
+  </product>
+  <product>
+    <id>11</id>
+    <name>Lampa LED tycova</name>
+    <category>Svietidla</category>
+    <subcategory>Svietidla Domace</subcategory>
+    <price>29</price>
+    <stock>12</stock>
+    <additional_information />
+  </product>
+</products>
