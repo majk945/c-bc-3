@@ -39,6 +39,7 @@ namespace liptak_bc
         public Dictionary<string, string> GetAdditionalInfo() { return this.AdditionalInfo; }
         public void SetAdditionalInfo(Dictionary<string, string> additionalInfo) { this.AdditionalInfo = additionalInfo; }
     }
+  
 }
 
 

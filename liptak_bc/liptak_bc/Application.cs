@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace liptak_bc
@@ -337,14 +338,16 @@ namespace liptak_bc
             Console.WriteLine("        ZORADIŤ PRODUKTY        ");
             Console.WriteLine("===========================\n");
 
-            // Ask if sorting from all products or specific products
-            Console.WriteLine("Chcete triediť zo všetkých produktov alebo zo špecifických produktov?");
+            // Ask if sorting from all products, specific products, or additional info
+            Console.WriteLine("Chcete triediť zo všetkých produktov, špecifických produktov, alebo podľa dodatočných informácií?");
             Console.WriteLine("1. Všetky produkty");
             Console.WriteLine("2. Špecifické produkty");
-            Console.Write("\nVyberte možnosť (1-2): ");
+            Console.WriteLine("3. Podľa dodatočných informácií");
+            Console.Write("\nVyberte možnosť (1-3): ");
             string sortChoice = Console.ReadLine();
 
             List<Product> productsToSort;
+            List<string> criteria = new List<string>();
 
             if (sortChoice == "2")
             {
@@ -364,66 +367,152 @@ namespace liptak_bc
                 // Display filtered products
                 DisplaySearchResults(productsToSort);
             }
+            else if (sortChoice == "3")
+            {
+                var filters = GetAdditionalSearchFilters(false);
+                productsToSort = FilterProductsByAdditionalInfo(ProductsList, filters);
+
+                if (productsToSort.Count == 0)
+                {
+                    Console.WriteLine("\nŽiadne produkty nevyhovujú zadaným kritériám.");
+                    Console.WriteLine("\nStlačte ENTER pre návrat do hlavného menu...");
+                    Console.ReadLine();
+                    return;
+                }
+
+                // Display filtered products
+                DisplaySearchResults(productsToSort);
+
+                // Ask for sorting criteria based on additional information
+                Console.WriteLine("\nZvoľte kritériá triedenia podľa dodatočných informácií:");
+                var sampleProduct = productsToSort.FirstOrDefault();
+                if (sampleProduct != null)
+                {
+                    foreach (var info in sampleProduct.GetAdditionalInfo().Keys)
+                    {
+                        Console.WriteLine($"Kritérium: {info}");
+                    }
+                }
+                Console.WriteLine("Zadajte názov kritéria (napr. Lumen):");
+                string criterionKey = Console.ReadLine().Trim();
+
+                if (sampleProduct != null && sampleProduct.GetAdditionalInfo().ContainsKey(criterionKey))
+                {
+                    string val = sampleProduct.GetAdditionalInfo()[criterionKey];
+                    bool ascending = true;
+                    if (double.TryParse(val, out _))
+                    {
+                        Console.WriteLine("Chcete triediť vzostupne (v) alebo zostupne (z)?");
+                        string orderChoice = Console.ReadLine().Trim().ToLower();
+                        ascending = orderChoice == "v";
+                    }
+                    else
+                    {
+                        Console.WriteLine("Chcete triediť podľa abecedy (vzostupne) alebo podľa hodnoty (A-G)?");
+                        string orderChoice = Console.ReadLine().Trim().ToLower();
+                        ascending = orderChoice == "vzostupne";
+                    }
+
+                    Comparison<Product> comparison = (p1, p2) =>
+                    {
+                        if (p1.GetAdditionalInfo().ContainsKey(criterionKey) && p2.GetAdditionalInfo().ContainsKey(criterionKey))
+                        {
+                            string val1 = p1.GetAdditionalInfo()[criterionKey];
+                            string val2 = p2.GetAdditionalInfo()[criterionKey];
+
+                            int result;
+                            if (double.TryParse(val1, out double num1) && double.TryParse(val2, out double num2))
+                            {
+                                result = num1.CompareTo(num2);
+                            }
+                            else if (TryExtractNumber(val1, out num1) && TryExtractNumber(val2, out num2))
+                            {
+                                result = num1.CompareTo(num2);
+                            }
+                            else if (criterionKey.Equals("energyClass", StringComparison.OrdinalIgnoreCase))
+                            {
+                                result = CompareEnergyClass(val1, val2);
+                            }
+                            else
+                            {
+                                result = string.Compare(val1, val2, StringComparison.OrdinalIgnoreCase);
+                            }
+
+                            return ascending ? result : -result;
+                        }
+                        return 0;
+                    };
+
+                    InsertionSort(productsToSort, comparison);
+                }
+                else
+                {
+                    Console.WriteLine("\n⛔ Kritérium nebolo nájdené, skúste znova.");
+                    Console.WriteLine("\nStlačte ENTER pre návrat...");
+                    Console.ReadLine();
+                    return;
+                }
+            }
             else
             {
                 productsToSort = new List<Product>(ProductsList);
-            }
 
-            // Ask for sorting criteria
-            Console.WriteLine("\nZvoľte kritériá triedenia:");
-            Console.WriteLine("1. Podľa ID (vzostupne/zostupne)");
-            Console.WriteLine("2. Podľa názvu (vzostupne/zostupne)");
-            Console.WriteLine("3. Podľa kategórie (vzostupne/zostupne)");
-            Console.WriteLine("4. Podľa podkategórie (vzostupne/zostupne)");
-            Console.WriteLine("5. Podľa ceny (vzostupne/zostupne)");
-            Console.WriteLine("6. Podľa množstva na sklade (vzostupne/zostupne)");
-            Console.WriteLine("Zadajte cislo a hodnotu (napr. 1z,3v,5z):");
+                // Ask for sorting criteria
+                Console.WriteLine("\nZvoľte kritériá triedenia:");
+                Console.WriteLine("1. Podľa ID (vzostupne/zostupne)");
+                Console.WriteLine("2. Podľa názvu (vzostupne/zostupne)");
+                Console.WriteLine("3. Podľa kategórie (vzostupne/zostupne)");
+                Console.WriteLine("4. Podľa podkategórie (vzostupne/zostupne)");
+                Console.WriteLine("5. Podľa ceny (vzostupne/zostupne)");
+                Console.WriteLine("6. Podľa množstva na sklade (vzostupne/zostupne)");
+                Console.WriteLine("Zadajte cislo a hodnotu (napr. 1z,3v,5z):");
 
-            string choice = Console.ReadLine();
-            var criteria = choice.Split(',').Select(c => c.Trim()).ToList();
+                string choice = Console.ReadLine();
+                criteria = choice.Split(',').Select(c => c.Trim()).ToList();
 
-            Comparison<Product> comparison = (p1, p2) =>
-            {
-                foreach (var criterion in criteria)
+                Comparison<Product> comparison = (p1, p2) =>
                 {
-                    string criterionKey = criterion.Substring(0, criterion.Length - 1);
-                    bool ascending = criterion.EndsWith("v", StringComparison.OrdinalIgnoreCase);
-                    int result = 0;
-
-                    switch (criterionKey)
+                    foreach (var criterion in criteria)
                     {
-                        case "1":
-                            result = p1.GetId().CompareTo(p2.GetId());
-                            break;
-                        case "2":
-                            result = p1.GetName().CompareTo(p2.GetName());
-                            break;
-                        case "3":
-                            result = p1.GetCategory().CompareTo(p2.GetCategory());
-                            break;
-                        case "4":
-                            result = p1.GetSubCategory().CompareTo(p2.GetSubCategory());
-                            break;
-                        case "5":
-                            result = p1.GetPrice().CompareTo(p2.GetPrice());
-                            break;
-                        case "6":
-                            result = p1.GetStock().CompareTo(p2.GetStock());
-                            break;
-                        default:
-                            Console.WriteLine("\n⛔ Neplatná voľba, skúste znova.");
-                            Console.WriteLine("\nStlačte ENTER pre návrat...");
-                            Console.ReadLine();
-                            return 0;
+                        string criterionKey = criterion.Substring(0, criterion.Length - 1);
+                        bool ascending = criterion.EndsWith("v", StringComparison.OrdinalIgnoreCase);
+                        int result = 0;
+
+                        switch (criterionKey)
+                        {
+                            case "1":
+                                result = p1.GetId().CompareTo(p2.GetId());
+                                break;
+                            case "2":
+                                result = p1.GetName().CompareTo(p2.GetName());
+                                break;
+                            case "3":
+                                result = p1.GetCategory().CompareTo(p2.GetCategory());
+                                break;
+                            case "4":
+                                result = p1.GetSubCategory().CompareTo(p2.GetSubCategory());
+                                break;
+                            case "5":
+                                result = p1.GetPrice().CompareTo(p2.GetPrice());
+                                break;
+                            case "6":
+                                result = p1.GetStock().CompareTo(p2.GetStock());
+                                break;
+                            default:
+                                Console.WriteLine("\n⛔ Neplatná voľba, skúste znova.");
+                                Console.WriteLine("\nStlačte ENTER pre návrat...");
+                                Console.ReadLine();
+                                return 0;
+                        }
+
+                        if (result != 0)
+                            return ascending ? result : -result;
                     }
+                    return 0;
+                };
 
-                    if (result != 0)
-                        return ascending ? result : -result;
-                }
-                return 0;
-            };
-
-            InsertionSort(productsToSort, comparison);
+                InsertionSort(productsToSort, comparison);
+            }
 
             Console.Clear();
             Console.WriteLine("\n===========================");
@@ -433,6 +522,10 @@ namespace liptak_bc
             if (sortChoice == "2")
             {
                 Console.WriteLine("Zoradené zo špecifických produktov:");
+            }
+            else if (sortChoice == "3")
+            {
+                Console.WriteLine("Zoradené podľa dodatočných informácií:");
             }
             else
             {
@@ -455,6 +548,71 @@ namespace liptak_bc
                 SaveSortedResults(productsToSort);
             }
         }
+
+        private SearchFilters GetAdditionalSearchFilters(bool promptForAdditionalInfo = true)
+        {
+            var filters = new SearchFilters();
+
+            Console.Write("Zadajte kategóriu: ");
+            filters.CategoryFilter = Console.ReadLine()?.Trim().ToLower() ?? "";
+
+            Console.Write("Chcete zadať aj podkategóriu? (ano/nie): ");
+            string includeSubCategory = Console.ReadLine()?.Trim().ToLower() ?? "";
+
+            if (includeSubCategory == "ano")
+            {
+                Console.Write("Zadajte podkategóriu: ");
+                filters.SubCategoryFilter = Console.ReadLine()?.Trim().ToLower() ?? "";
+            }
+
+            if (promptForAdditionalInfo)
+            {
+                Console.WriteLine("\nDostupné dodatočné informácie pre kategóriu '{0}':", filters.CategoryFilter);
+                var sampleProduct = ProductsList.FirstOrDefault(p => p.GetCategory().ToLower() == filters.CategoryFilter);
+                if (sampleProduct != null)
+                {
+                    foreach (var info in sampleProduct.GetAdditionalInfo().Keys)
+                    {
+                        Console.WriteLine($"- {info}");
+                    }
+                }
+
+                Console.WriteLine("\nZadajte dodatočné informácie (nechajte prázdne pre ukončenie):");
+                while (true)
+                {
+                    Console.Write("Zadajte nazov informacie: ");
+                    string key = Console.ReadLine();
+                    if (string.IsNullOrWhiteSpace(key)) break;
+
+                    Console.Write("Zadajte hodnotu informacie: ");
+                    string value = Console.ReadLine();
+                    filters.AdditionalInfoFilters[key.ToLower()] = value.ToLower();
+                }
+            }
+
+            return filters;
+        }
+
+
+        private bool TryExtractNumber(string input, out double number)
+        {
+            number = 0;
+            var match = Regex.Match(input, @"\d+");
+            if (match.Success)
+            {
+                return double.TryParse(match.Value, out number);
+            }
+            return false;
+        }
+        private int CompareEnergyClass(string class1, string class2)
+        {
+            string[] energyClasses = { "A", "B", "C", "D", "E", "F", "G" };
+            int index1 = Array.IndexOf(energyClasses, class1.ToUpper());
+            int index2 = Array.IndexOf(energyClasses, class2.ToUpper());
+
+            return index1.CompareTo(index2);
+        }
+
 
         private void DisplaySortedProducts(List<Product> sortedProducts)
         {
@@ -813,11 +971,24 @@ namespace liptak_bc
                 Console.WriteLine("        HĽADANIE PRODUKTOV        ");
                 Console.WriteLine("===========================\n");
 
-                var filters = GetSearchFilters();
+                Console.WriteLine("Chcete vykonať základné hľadanie alebo hľadanie podľa dodatočných informácií?");
+                Console.WriteLine("1. Základné hľadanie");
+                Console.WriteLine("2. Hľadanie podľa dodatočných informácií");
+                Console.Write("\nVyberte možnosť (1-2): ");
+                string searchChoice = Console.ReadLine();
 
-                var filteredProducts = FilterProducts(ProductsList, filters);
-
-                DisplaySearchResults(filteredProducts);
+                if (searchChoice == "2")
+                {
+                    var filters = GetAdditionalSearchFilters();
+                    var filteredProducts = FilterProductsByAdditionalInfo(ProductsList, filters);
+                    DisplaySearchResults(filteredProducts);
+                }
+                else
+                {
+                    var filters = GetSearchFilters();
+                    var filteredProducts = FilterProducts(ProductsList, filters);
+                    DisplaySearchResults(filteredProducts);
+                }
 
                 Console.WriteLine("\nMožnosti:");
                 Console.WriteLine("1. Nové vyhľadávanie");
@@ -829,6 +1000,58 @@ namespace liptak_bc
                     break;
             }
         }
+        private SearchFilters GetAdditionalSearchFilters()
+        {
+            var filters = new SearchFilters();
+
+            Console.Write("Zadajte kategóriu: ");
+            filters.CategoryFilter = Console.ReadLine()?.Trim().ToLower() ?? "";
+
+            Console.Write("Chcete zadať aj podkategóriu? (ano/nie): ");
+            string includeSubCategory = Console.ReadLine()?.Trim().ToLower() ?? "";
+
+            if (includeSubCategory == "ano")
+            {
+                Console.Write("Zadajte podkategóriu: ");
+                filters.SubCategoryFilter = Console.ReadLine()?.Trim().ToLower() ?? "";
+            }
+
+            Console.WriteLine("\nDostupné dodatočné informácie pre kategóriu '{0}':", filters.CategoryFilter);
+            var sampleProduct = ProductsList.FirstOrDefault(p => p.GetCategory().ToLower() == filters.CategoryFilter);
+            if (sampleProduct != null)
+            {
+                foreach (var info in sampleProduct.GetAdditionalInfo().Keys)
+                {
+                    Console.WriteLine($"- {info}");
+                }
+            }
+
+            Console.WriteLine("\nZadajte dodatočné informácie (nechajte prázdne pre ukončenie):");
+            while (true)
+            {
+                Console.Write("Zadajte nazov informacie: ");
+                string key = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(key)) break;
+
+                Console.Write("Zadajte hodnotu informacie: ");
+                string value = Console.ReadLine();
+                filters.AdditionalInfoFilters[key.ToLower()] = value.ToLower();
+            }
+
+            return filters;
+        }
+        private List<Product> FilterProductsByAdditionalInfo(List<Product> products, SearchFilters filters)
+        {
+            return products.Where(product =>
+                (string.IsNullOrWhiteSpace(filters.CategoryFilter) || product.GetCategory().ToLower().Equals(filters.CategoryFilter)) &&
+                (string.IsNullOrWhiteSpace(filters.SubCategoryFilter) || product.GetSubCategory().ToLower().Equals(filters.SubCategoryFilter)) &&
+                filters.AdditionalInfoFilters.All(filter =>
+                    product.GetAdditionalInfo().ContainsKey(filter.Key) &&
+                    product.GetAdditionalInfo()[filter.Key].ToLower().Contains(filter.Value)
+                )
+            ).ToList();
+        }
+        
 
         private SearchFilters GetSearchFilters()
         {
@@ -933,6 +1156,7 @@ namespace liptak_bc
             public double MinPrice { get; set; } = 0;
             public double MaxPrice { get; set; } = double.MaxValue;
             public bool FilterInStock { get; set; } = false;
+            public Dictionary<string, string> AdditionalInfoFilters { get; set; } = new Dictionary<string, string>();
         }
 
         private string TruncateString(string str, int maxLength)
