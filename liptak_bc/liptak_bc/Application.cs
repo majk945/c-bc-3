@@ -23,6 +23,7 @@ namespace liptak_bc
             RunMenu();
         }
 
+
         private void ParseData(XmlNodeList Products)
         {
             foreach (XmlNode product in Products)
@@ -850,8 +851,7 @@ namespace liptak_bc
             string maxPriceInput = Console.ReadLine()?.Trim() ?? "";
             filters.MaxPrice = string.IsNullOrWhiteSpace(maxPriceInput) ? double.MaxValue : double.TryParse(maxPriceInput, out double maxPrice) ? maxPrice : double.MaxValue;
 
-            Console.Write("Zobraziť len produkty na sklade? (ano/nie): ");
-            filters.FilterInStock = (Console.ReadLine()?.Trim().ToLower() ?? "") == "ano";
+
 
             return filters;
         }

@@ -9,7 +9,7 @@ namespace liptak_bc
         private string name { get; set; }
         private string category { get; set; }
         private string subCategory { get; set; }
-        
+
         private double price { get; set; }
         private int stock { get; set; }
         private Dictionary<string, string> AdditionalInfo { get; set; }
