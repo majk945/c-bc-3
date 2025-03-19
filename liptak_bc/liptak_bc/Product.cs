@@ -9,9 +9,10 @@ namespace liptak_bc
         private string name { get; set; }
         private string category { get; set; }
         private string subCategory { get; set; }
-
         private double price { get; set; }
         private int stock { get; set; }
+        private int yos { get; set; }
+        private int q { get; set; }
         private Dictionary<string, string> AdditionalInfo { get; set; }
 
         public Product()
@@ -36,6 +37,11 @@ namespace liptak_bc
         public int GetStock() { return stock; }
         public void SetStock(int stock) { this.stock = stock; }
 
+        public int GetYos() { return yos; }
+        public void SetYos(int yos) { this.yos = yos; }
+
+        public int GetQ() { return q; }
+        public void SetQ(int q) { this.q = q; }
         public Dictionary<string, string> GetAdditionalInfo() { return this.AdditionalInfo; }
         public void SetAdditionalInfo(Dictionary<string, string> additionalInfo) { this.AdditionalInfo = additionalInfo; }
     }

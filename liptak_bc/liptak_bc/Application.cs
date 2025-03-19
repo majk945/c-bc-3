@@ -18,7 +18,7 @@ namespace liptak_bc
             ShowBanner();
             this.ProductsList = new List<Product>();
             this.document = new XmlDocument();
-            document.Load("C:\\Users\\majk\\Desktop\\liptak_bc\\liptak_bc\\xmlProducts.xml");
+            document.Load("C:\\Users\\majk\\Desktop\\111bakalarka\\c-bc-3\\liptak_bc\\liptak_bc\\xmlProducts.xml");
             XmlNodeList products = document.DocumentElement.ChildNodes;
             ParseData(products);
             RunMenu();
@@ -36,6 +36,10 @@ namespace liptak_bc
                 newProduct.SetSubCategory(product["subcategory"].InnerText);
                 newProduct.SetPrice(double.Parse(product["price"].InnerText));
                 newProduct.SetStock(int.Parse(product["stock"].InnerText));
+
+                // Add null checks for yos and q elements
+                newProduct.SetYos(product["yos"] != null ? int.Parse(product["yos"].InnerText) : 0);
+                newProduct.SetQ(product["q"] != null ? int.Parse(product["q"].InnerText) : 0);
 
                 var AdditionalInfoElement = product["additional_information"];
                 if (AdditionalInfoElement != null)
@@ -83,6 +87,14 @@ namespace liptak_bc
                 stock.InnerText = product.GetStock().ToString();
                 productElement.AppendChild(stock);
 
+                XmlElement yos = document.CreateElement("yos");
+                yos.InnerText = product.GetYos().ToString();
+                productElement.AppendChild(yos);
+
+                XmlElement q = document.CreateElement("q");
+                q.InnerText = product.GetQ().ToString();
+                productElement.AppendChild(q);
+
                 XmlElement additionalInfo = document.CreateElement("additional_information");
                 foreach (var info in product.GetAdditionalInfo())
                 {
@@ -97,7 +109,6 @@ namespace liptak_bc
 
             document.Save("C:\\Users\\majk\\Desktop\\liptak_bc\\liptak_bc\\xmlProducts.xml");
         }
-
         private void RunMenu()
         {
             while (true)
@@ -350,7 +361,6 @@ namespace liptak_bc
 
             if (sortChoice == "2")
             {
-               
                 Console.WriteLine("Najprv vyhľadajte produkty podľa kritérií.");
                 var filters = GetSearchFilters();
                 productsToSort = FilterProducts(ProductsList, filters);
@@ -363,7 +373,6 @@ namespace liptak_bc
                     return;
                 }
 
-             
                 DisplaySearchResults(productsToSort);
             }
             else if (sortChoice == "3")
@@ -379,7 +388,6 @@ namespace liptak_bc
                     return;
                 }
 
-         
                 DisplaySearchResults(productsToSort);
 
                 Console.WriteLine("\nZvoľte kritériá triedenia podľa dodatočných informácií:");
@@ -406,7 +414,7 @@ namespace liptak_bc
                     }
                     else
                     {
-                        Console.WriteLine("Chcete triediť a-z alebo z-a? (1/0");
+                        Console.WriteLine("Chcete triediť a-z alebo z-a? (1/0)");
                         string orderChoice = Console.ReadLine().Trim().ToLower();
                         ascending = orderChoice == "1";
                     }
@@ -455,7 +463,6 @@ namespace liptak_bc
             {
                 productsToSort = new List<Product>(ProductsList);
 
-               
                 Console.WriteLine("\nZvoľte kritériá triedenia:");
                 Console.WriteLine("1. Podľa ID (vzostupne/zostupne)");
                 Console.WriteLine("2. Podľa názvu (vzostupne/zostupne)");
@@ -463,6 +470,8 @@ namespace liptak_bc
                 Console.WriteLine("4. Podľa podkategórie (vzostupne/zostupne)");
                 Console.WriteLine("5. Podľa ceny (vzostupne/zostupne)");
                 Console.WriteLine("6. Podľa množstva na sklade (vzostupne/zostupne)");
+                Console.WriteLine("7. Podľa roku predaja (yos) (vzostupne/zostupne)");
+                Console.WriteLine("8. Podľa kvartálu predaja (q) (vzostupne/zostupne)");
                 Console.WriteLine("Zadajte cislo a hodnotu (napr. 1z,3v,5z):");
 
                 string choice = Console.ReadLine();
@@ -495,6 +504,12 @@ namespace liptak_bc
                                 break;
                             case "6":
                                 result = p1.GetStock().CompareTo(p2.GetStock());
+                                break;
+                            case "7":
+                                result = p1.GetYos().CompareTo(p2.GetYos());
+                                break;
+                            case "8":
+                                result = p1.GetQ().CompareTo(p2.GetQ());
                                 break;
                             default:
                                 Console.WriteLine("\nNeplatná voľba, skúste znova.");
@@ -619,19 +634,21 @@ namespace liptak_bc
             Console.WriteLine("                    ZOZNAM ZORADENÝCH PRODUKTOV                ");
             Console.WriteLine("==============================================================");
 
-            Console.WriteLine("{0,-5} | {1,-35} | {2,-15} | {3,-20} | {4,-8} | {5,-6}",
-                "ID", "Názov", "Kategória", "Podkategória", "Cena (EUR)", "Sklad");
-            Console.WriteLine(new string('=', 90));
+            Console.WriteLine("{0,-5} | {1,-35} | {2,-15} | {3,-20} | {4,-8} | {5,-6} | {6,-10} | {7,-5}",
+                "ID", "Názov", "Kategória", "Podkategória", "Cena (EUR)", "Sklad", "Rok predaja (yos)", "Kvartál (q)");
+            Console.WriteLine(new string('=', 110));
 
             foreach (var product in sortedProducts)
             {
-                Console.WriteLine("{0,-5} | {1,-35} | {2,-15} | {3,-20} | {4,-8:F2} | {5,-6} ks",
+                Console.WriteLine("{0,-5} | {1,-35} | {2,-15} | {3,-20} | {4,-8:F2} | {5,-6} ks | {6,-10} | {7,-5}",
                     product.GetId(),
                     product.GetName().Length > 35 ? product.GetName().Substring(0, 32) + "..." : product.GetName(),
                     product.GetCategory(),
                     product.GetSubCategory(),
                     product.GetPrice(),
-                    product.GetStock());
+                    product.GetStock(),
+                    product.GetYos(),
+                    product.GetQ());
 
                 if (product.GetAdditionalInfo().Count > 0)
                 {
@@ -642,7 +659,7 @@ namespace liptak_bc
                     }
                 }
 
-                Console.WriteLine(new string('-', 90));
+                Console.WriteLine(new string('-', 110));
             }
 
             Console.WriteLine("\nStlačte ENTER pre návrat do hlavného menu...");
@@ -710,21 +727,23 @@ namespace liptak_bc
             Console.WriteLine($"            PRODUKTY V KATEGÓRII: {category.ToUpper()}");
             Console.WriteLine($"==============================================================");
 
-            Console.WriteLine("{0,-5} | {1,-35} | {2,-20} | {3,-8} | {4,-6}",
-                "ID", "Názov", "Podkategória", "Cena (EUR)", "Sklad");
-            Console.WriteLine(new string('=', 80));
+            Console.WriteLine("{0,-5} | {1,-35} | {2,-20} | {3,-8} | {4,-6} | {5,-10} | {6,-5}",
+                "ID", "Názov", "Podkategória", "Cena (EUR)", "Sklad", "Rok predaja (yos)", "Kvartál (q)");
+            Console.WriteLine(new string('=', 110));
 
             bool found = false;
             foreach (var product in ProductsList)
             {
                 if (product.GetCategory().Equals(category, StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine("{0,-5} | {1,-35} | {2,-20} | {3,-8:F2} | {4,-6} ks",
+                    Console.WriteLine("{0,-5} | {1,-35} | {2,-20} | {3,-8:F2} | {4,-6} ks | {5,-10} | {6,-5}",
                         product.GetId(),
                         product.GetName().Length > 35 ? product.GetName().Substring(0, 32) + "..." : product.GetName(),
                         product.GetSubCategory(),
                         product.GetPrice(),
-                        product.GetStock());
+                        product.GetStock(),
+                        product.GetYos(),
+                        product.GetQ());
 
                     if (product.GetAdditionalInfo().Count > 0)
                     {
@@ -735,7 +754,7 @@ namespace liptak_bc
                         }
                     }
 
-                    Console.WriteLine(new string('-', 80));
+                    Console.WriteLine(new string('-', 110));
                     found = true;
                 }
             }
@@ -930,19 +949,21 @@ namespace liptak_bc
             Console.WriteLine("                    ZOZNAM VŠETKÝCH PRODUKTOV                ");
             Console.WriteLine("==============================================================");
 
-            Console.WriteLine("{0,-5} | {1,-35} | {2,-15} | {3,-20} | {4,-8} | {5,-6}",
-                "ID", "Názov", "Kategória", "Podkategória", "Cena (EUR)", "Sklad");
-            Console.WriteLine(new string('=', 90));
+            Console.WriteLine("{0,-5} | {1,-35} | {2,-15} | {3,-20} | {4,-8} | {5,-6} | {6,-10} | {7,-5}",
+                "ID", "Názov", "Kategória", "Podkategória", "Cena (EUR)", "Sklad", "Rok predaja (yos)", "Kvartál (q)");
+            Console.WriteLine(new string('=', 110));
 
             foreach (var product in ProductsList)
             {
-                Console.WriteLine("{0,-5} | {1,-35} | {2,-15} | {3,-20} | {4,-8:F2} | {5,-6} ks",
+                Console.WriteLine("{0,-5} | {1,-35} | {2,-15} | {3,-20} | {4,-8:F2} | {5,-6} ks | {6,-10} | {7,-5}",
                     product.GetId(),
                     product.GetName().Length > 35 ? product.GetName().Substring(0, 32) + "..." : product.GetName(),
                     product.GetCategory(),
                     product.GetSubCategory(),
                     product.GetPrice(),
-                    product.GetStock());
+                    product.GetStock(),
+                    product.GetYos(),
+                    product.GetQ());
 
                 if (product.GetAdditionalInfo().Count > 0)
                 {
@@ -953,13 +974,12 @@ namespace liptak_bc
                     }
                 }
 
-                Console.WriteLine(new string('-', 90));
+                Console.WriteLine(new string('-', 110));
             }
 
             Console.WriteLine("\nStlačte ENTER pre návrat do hlavného menu...");
             Console.ReadLine();
         }
-
         private void SearchProducts()
         {
             while (true)
@@ -1049,7 +1069,7 @@ namespace liptak_bc
                 )
             ).ToList();
         }
-        
+
 
         private SearchFilters GetSearchFilters()
         {
@@ -1072,7 +1092,13 @@ namespace liptak_bc
             string maxPriceInput = Console.ReadLine()?.Trim() ?? "";
             filters.MaxPrice = string.IsNullOrWhiteSpace(maxPriceInput) ? double.MaxValue : double.TryParse(maxPriceInput, out double maxPrice) ? maxPrice : double.MaxValue;
 
+            Console.Write("Zadajte rok predaja (yos) (nechajte prázdne pre ignorovanie): ");
+            string yosInput = Console.ReadLine()?.Trim() ?? "";
+            filters.Yos = string.IsNullOrWhiteSpace(yosInput) ? (int?)null : int.Parse(yosInput);
 
+            Console.Write("Zadajte kvartál predaja (q) (nechajte prázdne pre ignorovanie): ");
+            string qInput = Console.ReadLine()?.Trim() ?? "";
+            filters.Q = string.IsNullOrWhiteSpace(qInput) ? (int?)null : int.Parse(qInput);
 
             return filters;
         }
@@ -1084,7 +1110,9 @@ namespace liptak_bc
                 (string.IsNullOrWhiteSpace(filters.CategoryFilter) || product.GetCategory().ToLower().Equals(filters.CategoryFilter)) &&
                 (string.IsNullOrWhiteSpace(filters.SubCategoryFilter) || product.GetSubCategory().ToLower().Equals(filters.SubCategoryFilter)) &&
                 (product.GetPrice() >= filters.MinPrice && product.GetPrice() <= filters.MaxPrice) &&
-                (!filters.FilterInStock || product.GetStock() > 0)
+                (!filters.FilterInStock || product.GetStock() > 0) &&
+                (!filters.Yos.HasValue || product.GetYos() == filters.Yos.Value) &&
+                (!filters.Q.HasValue || product.GetQ() == filters.Q.Value)
             ).ToList();
         }
 
@@ -1101,19 +1129,21 @@ namespace liptak_bc
                 return;
             }
 
-            Console.WriteLine("{0,-5} | {1,-35} | {2,-15} | {3,-20} | {4,-10} | {5,-8}",
-                "ID", "Názov", "Kategória", "Podkategória", "Cena (€)", "Množstvo");
-            Console.WriteLine(new string('-', 105));
+            Console.WriteLine("{0,-5} | {1,-35} | {2,-15} | {3,-20} | {4,-10} | {5,-8} | {6,-10} | {7,-5}",
+                "ID", "Názov", "Kategória", "Podkategória", "Cena (€)", "Množstvo", "Rok predaja (yos)", "Kvartál (q)");
+            Console.WriteLine(new string('-', 110));
 
             foreach (var product in filteredProducts)
             {
-                Console.WriteLine("{0,-5} | {1,-35} | {2,-15} | {3,-20} | {4,-10:F2} | {5,-8} ks",
+                Console.WriteLine("{0,-5} | {1,-35} | {2,-15} | {3,-20} | {4,-10:F2} | {5,-8} ks | {6,-10} | {7,-5}",
                     product.GetId(),
                     TruncateString(product.GetName(), 35),
                     product.GetCategory(),
                     product.GetSubCategory(),
                     product.GetPrice(),
-                    product.GetStock());
+                    product.GetStock(),
+                    product.GetYos(),
+                    product.GetQ());
 
                 if (product.GetAdditionalInfo().Count > 0)
                 {
@@ -1124,12 +1154,13 @@ namespace liptak_bc
                     }
                 }
 
-                Console.WriteLine(new string('-', 105));
+                Console.WriteLine(new string('-', 110));
             }
 
             Console.WriteLine($"\nNájdených produktov: {filteredProducts.Count}");
+            Console.WriteLine("\nStlačte ENTER pre návrat...");
+            Console.ReadLine();
         }
-
         private void InsertionSort<T>(List<T> list, Comparison<T> comparison)
         {
             for (int i = 1; i < list.Count; i++)
@@ -1154,6 +1185,8 @@ namespace liptak_bc
             public double MinPrice { get; set; } = 0;
             public double MaxPrice { get; set; } = double.MaxValue;
             public bool FilterInStock { get; set; } = false;
+            public int? Yos { get; set; } = null;
+            public int? Q { get; set; } = null;
             public Dictionary<string, string> AdditionalInfoFilters { get; set; } = new Dictionary<string, string>();
         }
 
