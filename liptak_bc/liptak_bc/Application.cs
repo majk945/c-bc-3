@@ -177,12 +177,12 @@ namespace liptak_bc
                     case "8":
                         Console.Clear();
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("\n👋 Ďakujeme za používanie programu. Dovidenia!\n");
+                        Console.WriteLine("\nĎakujeme za používanie programu. Dovidenia!\n");
                         Console.ForegroundColor = ConsoleColor.Gray;
                         return;
                     default:
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("\n⛔ Neplatná voľba, skúste znova.");
+                        Console.WriteLine("\nNeplatná voľba, skúste znova.");
                         Console.ForegroundColor = ConsoleColor.Gray;
                         Console.WriteLine("\nStlačte ENTER pre pokračovanie...");
                         Console.ReadLine();
@@ -237,7 +237,7 @@ namespace liptak_bc
             ProductsList.Add(newProduct);
             SaveData();
 
-            Console.WriteLine("\n✅ Produkt bol úspešne pridaný.");
+            Console.WriteLine("\nProdukt bol úspešne pridaný.");
             Console.WriteLine("\nStlačte ENTER pre návrat do hlavného menu...");
             Console.ReadLine();
         }
@@ -255,7 +255,7 @@ namespace liptak_bc
             Product product = ProductsList.FirstOrDefault(p => p.GetId() == productId);
             if (product == null)
             {
-                Console.WriteLine("\n⛔ Produkt s týmto ID neexistuje.");
+                Console.WriteLine("\nProdukt s týmto ID neexistuje.");
                 Console.WriteLine("\nStlačte ENTER pre návrat do hlavného menu...");
                 Console.ReadLine();
                 return;
@@ -299,7 +299,7 @@ namespace liptak_bc
 
             SaveData();
 
-            Console.WriteLine("\n✅ Produkt bol úspešne aktualizovaný.");
+            Console.WriteLine("\nProdukt bol úspešne aktualizovaný.");
             Console.WriteLine("\nStlačte ENTER pre návrat do hlavného menu...");
             Console.ReadLine();
         }
@@ -317,7 +317,7 @@ namespace liptak_bc
             Product product = ProductsList.FirstOrDefault(p => p.GetId() == productId);
             if (product == null)
             {
-                Console.WriteLine("\n⛔ Produkt s týmto ID neexistuje.");
+                Console.WriteLine("\nProdukt s týmto ID neexistuje.");
                 Console.WriteLine("\nStlačte ENTER pre návrat do hlavného menu...");
                 Console.ReadLine();
                 return;
@@ -326,7 +326,7 @@ namespace liptak_bc
             ProductsList.Remove(product);
             SaveData();
 
-            Console.WriteLine("\n✅ Produkt bol úspešne odstránený.");
+            Console.WriteLine("\nProdukt bol úspešne odstránený.");
             Console.WriteLine("\nStlačte ENTER pre návrat do hlavného menu...");
             Console.ReadLine();
         }
@@ -338,7 +338,6 @@ namespace liptak_bc
             Console.WriteLine("        ZORADIŤ PRODUKTY        ");
             Console.WriteLine("===========================\n");
 
-            // Ask if sorting from all products, specific products, or additional info
             Console.WriteLine("Chcete triediť zo všetkých produktov, špecifických produktov, alebo podľa dodatočných informácií?");
             Console.WriteLine("1. Všetky produkty");
             Console.WriteLine("2. Špecifické produkty");
@@ -351,7 +350,7 @@ namespace liptak_bc
 
             if (sortChoice == "2")
             {
-                // Get search filters first
+               
                 Console.WriteLine("Najprv vyhľadajte produkty podľa kritérií.");
                 var filters = GetSearchFilters();
                 productsToSort = FilterProducts(ProductsList, filters);
@@ -364,7 +363,7 @@ namespace liptak_bc
                     return;
                 }
 
-                // Display filtered products
+             
                 DisplaySearchResults(productsToSort);
             }
             else if (sortChoice == "3")
@@ -380,10 +379,9 @@ namespace liptak_bc
                     return;
                 }
 
-                // Display filtered products
+         
                 DisplaySearchResults(productsToSort);
 
-                // Ask for sorting criteria based on additional information
                 Console.WriteLine("\nZvoľte kritériá triedenia podľa dodatočných informácií:");
                 var sampleProduct = productsToSort.FirstOrDefault();
                 if (sampleProduct != null)
@@ -408,9 +406,9 @@ namespace liptak_bc
                     }
                     else
                     {
-                        Console.WriteLine("Chcete triediť podľa abecedy (vzostupne) alebo podľa hodnoty (A-G)?");
+                        Console.WriteLine("Chcete triediť a-z alebo z-a? (1/0");
                         string orderChoice = Console.ReadLine().Trim().ToLower();
-                        ascending = orderChoice == "vzostupne";
+                        ascending = orderChoice == "1";
                     }
 
                     Comparison<Product> comparison = (p1, p2) =>
@@ -447,7 +445,7 @@ namespace liptak_bc
                 }
                 else
                 {
-                    Console.WriteLine("\n⛔ Kritérium nebolo nájdené, skúste znova.");
+                    Console.WriteLine("\nKritérium nebolo nájdené, skúste znova.");
                     Console.WriteLine("\nStlačte ENTER pre návrat...");
                     Console.ReadLine();
                     return;
@@ -457,7 +455,7 @@ namespace liptak_bc
             {
                 productsToSort = new List<Product>(ProductsList);
 
-                // Ask for sorting criteria
+               
                 Console.WriteLine("\nZvoľte kritériá triedenia:");
                 Console.WriteLine("1. Podľa ID (vzostupne/zostupne)");
                 Console.WriteLine("2. Podľa názvu (vzostupne/zostupne)");
@@ -499,7 +497,7 @@ namespace liptak_bc
                                 result = p1.GetStock().CompareTo(p2.GetStock());
                                 break;
                             default:
-                                Console.WriteLine("\n⛔ Neplatná voľba, skúste znova.");
+                                Console.WriteLine("\nNeplatná voľba, skúste znova.");
                                 Console.WriteLine("\nStlačte ENTER pre návrat...");
                                 Console.ReadLine();
                                 return 0;
