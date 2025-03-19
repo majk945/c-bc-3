@@ -11,8 +11,12 @@ namespace liptak_bc
         private string subCategory { get; set; }
         private double price { get; set; }
         private int stock { get; set; }
-        private int yos { get; set; }
-        private int q { get; set; }
+        private int sold_2023 { get; set; }
+        private int sold_2024 { get; set; }
+        private int sold { get; set; }
+
+   
+
         private Dictionary<string, string> AdditionalInfo { get; set; }
 
         public Product()
@@ -37,11 +41,15 @@ namespace liptak_bc
         public int GetStock() { return stock; }
         public void SetStock(int stock) { this.stock = stock; }
 
-        public int GetYos() { return yos; }
-        public void SetYos(int yos) { this.yos = yos; }
+        public int GetSold2023() { return sold_2023; }
+        public void SetSold2023(int sold_2023) { this.sold_2023 = sold_2023; }
 
-        public int GetQ() { return q; }
-        public void SetQ(int q) { this.q = q; }
+        public int GetSold2024() { return sold_2024; }
+        public void SetSold2024(int sold_2024) { this.sold_2024 = sold_2024; }
+
+        public int GetSold() { return sold; }
+        public void SetSold(int sold) { this.sold = sold; }
+
         public Dictionary<string, string> GetAdditionalInfo() { return this.AdditionalInfo; }
         public void SetAdditionalInfo(Dictionary<string, string> additionalInfo) { this.AdditionalInfo = additionalInfo; }
     }
